@@ -18,23 +18,27 @@ const tmpData = [
 
 export default function MembranePrediction() {
     return (
-        <div className="bg-[#1F2937] mx-6 my-6 rounded-lg">
+        <div className="bg-bg-card mx-6 my-6 ">
             {/* Filters */}
             <div className=" px-6 py-4 flex flex-wrap gap-4 items-center justify-start">
                 <div className="flex items-center gap-2">
-                    <span className="font-medium text-white">06/01/2024</span>
-                    <span className="text-gray-500">→</span>
-                    <span className="font-medium text-white">06/30/2024</span>
+                    <span className="font-medium text-text-body">
+                        06/01/2024
+                    </span>
+                    <span className="text-text-body">→</span>
+                    <span className="font-medium text-text-body">
+                        06/30/2024
+                    </span>
                 </div>
-                <select className=" rounded-lg px-3 py-1 text-sm text-white bg-[#374151] hover:border-gray-300  focus:outline-none">
-                    <option value="UF_2" className="text-white">
+                <select className=" rounded-lg px-3 py-1 text-sm text-text-caption border bg-background-input hover:border-gray-300  focus:outline-none">
+                    <option value="UF_2" className="text-text-caption">
                         UF_Membrane_Train_2
                     </option>
-                    <option value="UF_3" className="text-white">
+                    <option value="UF_3" className="text-text-caption">
                         UF_Membrane_Train_3
                     </option>
                 </select>
-                <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-wtext-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <button className="ml-auto font-medium px-4 py-2 bg-button-bg text-text-header rounded-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none  ">
                     Submit
                 </button>
             </div>

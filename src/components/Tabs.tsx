@@ -12,24 +12,28 @@ export default function Tabs({ activeTab, setActiveTab }: TabsProps) {
     ];
 
     return (
-        <div className="w-full  px-10">
+        <div className="w-full">
             <nav
-                className="flex items-center bg-[#1F2937] rounded-lg overflow-hidden px-3 py-3"
+                className="flex items-center border-b border-divider-primary px-10"
                 aria-label="Tabs"
             >
-                {tabs.map((tab, idx) => (
+                {tabs.map((tab) => (
                     <button
-                        key={idx}
+                        key={tab.key}
                         onClick={() => setActiveTab(tab.key)}
-                        className={` p-3 text-base font-medium 
+                        className={`
+                            relative px-4 py-3 text-base font-medium
                             ${
                                 activeTab === tab.key
-                                    ? "text-white bg-blue-500 rounded-xl "
-                                    : "hover:text-white text-gray-400  hover:border-gray-300"
+                                    ? "text-text-body"
+                                    : "text-text-caption hover:text-text-body"
                             }
-                            `}
+                        `}
                     >
                         {tab.label}
+                        {activeTab === tab.key && (
+                            <span className="absolute left-1/2 -bottom-0 h-[2px] w-32 -translate-x-1/2 bg-button-bg rounded" />
+                        )}
                     </button>
                 ))}
             </nav>

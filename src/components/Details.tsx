@@ -25,14 +25,14 @@ export default function Details() {
     ]);
     return (
         <table className="w-full text-sm text-left border border-transparent">
-            <thead className="bg-[#374151] text-[#969DA9]">
+            <thead className=" text-text-body">
                 <tr>
                     <th className="px-3 py-2 ">Parameters</th>
                     <th className="px-3 py-2 ">Baseline Operation</th>
                     <th className="px-3 py-2 ">Optimized Operation</th>
                 </tr>
             </thead>
-            <tbody className="text-[#F1FFFF]">
+            <tbody className="text-text-caption">
                 {schedule.map((row, idx) => (
                     <tr key={idx} className="hover:bg-gray-50 hover:text-black">
                         <td className="px-3 py-2 ">{row.parameters}</td>

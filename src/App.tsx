@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "./components/Header";
 import Tabs from "./components/Tabs";
-import Loading from "./components/loading";
+import Loading from "./components/Loading";
 
 import OperationTrends from "./pages/OperationTrends";
 import MembranePrediction from "./pages/MembranePrediction";
@@ -22,7 +22,7 @@ function App() {
     };
 
     return (
-        <div className="min-h-screen w-full bg-[#111827]">
+        <div className="min-h-screen w-full bg-background">
             {/* Header */}
             <Header />
 

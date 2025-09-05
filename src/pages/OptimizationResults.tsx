@@ -20,21 +20,23 @@ function AccordionItem({
     children,
 }: AccordionItemProps) {
     return (
-        <div className="bg-[#1F2937] shadow rounded-lg p-4">
+        <div className="bg-bg-card shadow rounded-lg p-4">
             <button
                 onClick={onClick}
                 className="flex justify-between items-center w-full text-left"
             >
-                <h2 className="text-lg font-semibold text-white">{title}</h2>
+                <h2 className="text-lg font-semibold text-text-body">
+                    {title}
+                </h2>
                 {isOpen ? (
-                    <ChevronUp className="text-white" />
+                    <ChevronUp className="text-icon" />
                 ) : (
-                    <ChevronDown className="text-white" />
+                    <ChevronDown className="text-icon" />
                 )}
             </button>
 
             {isOpen && (
-                <div className="text-sm space-y-2 text-white mt-4">
+                <div className="text-sm space-y-2 text-text-body mt-4">
                     {children}
                 </div>
             )}
@@ -67,37 +69,41 @@ export default function OptimizationTrialResults() {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-                <div className="bg-[#1F2937] shadow rounded-lg p-4 text-center">
-                    <p className="text-sm font-medium text-gray-400">
+                <div className="bg-bg-card shadow rounded-lg p-4 text-center">
+                    <p className="text-sm font-medium text-text-caption">
                         Estimated cost for Trial
                     </p>
-                    <p className="text-2xl font-bold text-white">$576.14</p>
+                    <p className="text-2xl font-bold text-text-body">$576.14</p>
                 </div>
-                <div className="bg-[#1F2937] shadow rounded-lg p-4 text-center">
-                    <p className="text-sm font-medium text-gray-400">
+                <div className="bg-bg-card shadow rounded-lg p-4 text-center">
+                    <p className="text-sm font-medium text-text-caption">
                         Estimated production volume
                     </p>
-                    <p className="text-2xl font-bold text-white">
+                    <p className="text-2xl font-bold text-text-body">
                         82,413.00 m³
                     </p>
                 </div>
-                <div className="bg-[#1F2937] shadow rounded-lg p-4 text-center">
-                    <p className="text-sm font-medium text-gray-400">
+                <div className="bg-bg-card shadow rounded-lg p-4 text-center">
+                    <p className="text-sm font-medium text-text-caption">
                         Avg Flux
                     </p>
-                    <p className="text-2xl font-bold text-white">42.00 Lmh</p>
+                    <p className="text-2xl font-bold text-text-body">
+                        42.00 Lmh
+                    </p>
                 </div>
-                <div className="bg-[#1F2937] shadow rounded-lg p-4 text-center">
-                    <p className="text-sm font-medium text-gray-400">
+                <div className="bg-bg-card shadow rounded-lg p-4 text-center">
+                    <p className="text-sm font-medium text-text-caption">
                         Average Turbidity
                     </p>
-                    <p className="text-2xl font-bold text-white">0.47 NTU</p>
+                    <p className="text-2xl font-bold text-text-body">
+                        0.47 NTU
+                    </p>
                 </div>
-                <div className="bg-[#1F2937] shadow rounded-lg p-4 text-center">
-                    <p className="text-sm font-medium text-gray-400">
+                <div className="bg-bg-card shadow rounded-lg p-4 text-center">
+                    <p className="text-sm font-medium text-text-caption">
                         Estimated Permeability Loss
                     </p>
-                    <p className="text-2xl font-bold text-white">
+                    <p className="text-2xl font-bold text-text-body">
                         0.13 Lmh/bar
                     </p>
                 </div>
@@ -106,12 +112,12 @@ export default function OptimizationTrialResults() {
             {/* Main Content */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                 {/* Cleaning Schedule Table */}
-                <div className="bg-[#1F2937] shadow rounded-lg p-4 lg:col-span-2">
-                    <h2 className="text-lg font-semibold text-white mb-4">
+                <div className="bg-bg-card shadow rounded-lg p-4 lg:col-span-2">
+                    <h2 className="text-lg font-semibold text-text-body mb-4">
                         Cleaning Schedule
                     </h2>
                     <table className="w-full text-sm text-left border border-transparent">
-                        <thead className="bg-[#374151] text-[#969DA9]">
+                        <thead className=" text-text-body">
                             <tr>
                                 <th className="px-3 py-2 border border-transparent">
                                     TimeStamp
@@ -122,7 +128,7 @@ export default function OptimizationTrialResults() {
                                 <th className="px-3 py-2">Cleaning Method</th>
                             </tr>
                         </thead>
-                        <tbody className="text-[#F1FFFF]">
+                        <tbody className="text-text-caption">
                             {schedule.map((row, idx) => (
                                 <tr
                                     key={idx}

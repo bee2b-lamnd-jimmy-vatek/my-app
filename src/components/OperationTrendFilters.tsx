@@ -12,25 +12,25 @@ export default function OperationTrendFilters({
     return (
         <div className=" px-6 py-4 flex flex-wrap gap-4 items-center w-full">
             <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-white" />
+                <Calendar className="w-5 h-5 text-icon" />
                 <input
                     type="date"
-                    className="border rounded-lg px-2 py-1 text-sm text-white bg-[#374151] hover:border-gray-300  focus:outline-none"
+                    className="border rounded-lg px-2 py-1 text-sm text-text-caption bg-background-input hover:border-gray-300  focus:outline-none"
                     defaultValue="2024-06-01"
                 />
-                <span className="text-white">→</span>
+                <span className="text-text-caption">→</span>
                 <input
                     type="date"
-                    className="border rounded-lg px-2 py-1 text-sm text-white bg-[#374151] hover:border-gray-300  focus:outline-none"
+                    className="border rounded-lg px-2 py-1 text-sm text-text-caption bg-background-input hover:border-gray-300  focus:outline-none"
                     defaultValue="2024-06-30"
                 />
             </div>
 
-            <select className="border rounded-lg px-3 py-1 text-sm text-white bg-[#374151] hover:border-gray-300  focus:outline-none">
-                <option value="UF_2" className="text-white">
+            <select className="border rounded-lg px-3 py-1 text-sm text-text-caption bg-background-input hover:border-gray-300  focus:outline-none">
+                <option value="UF_2" className="text-text-caption">
                     UF_Membrane_Train_2
                 </option>
-                <option value="UF_3" className="text-white">
+                <option value="UF_3" className="text-text-caption">
                     UF_Membrane_Train_3
                 </option>
             </select>
@@ -47,7 +47,7 @@ export default function OperationTrendFilters({
             </div>
 
             <button
-                className="ml-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none  "
+                className="ml-auto font-medium px-4 py-2 bg-button-bg text-text-header rounded-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none  "
                 onClick={onSubmit}
             >
                 Submit

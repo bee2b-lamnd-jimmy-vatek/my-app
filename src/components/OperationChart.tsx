@@ -38,19 +38,19 @@ export default function OperationChart() {
     const chartConfigs = [
         {
             data: generateMockData(40, 5, 4), // Flux data
-            color: "#2563eb",
+            color: "var(--chart-violet)",
             label: "Flux (Lmh)",
             domain: [30, 50],
         },
         {
             data: generateMockData(-120, 5, 4), // Permeability data
-            color: "#f97316",
+            color: "var(--chart-yellow)",
             label: "Permeability (Lmh/bar)",
             domain: [-130, -110],
         },
         {
             data: generateMockData(-35, 5, 4), // TMP data
-            color: "#22c55e",
+            color: "var(--chart-green)",
             label: "TMP (kPa)",
             domain: [-45, -25],
         },
@@ -61,7 +61,7 @@ export default function OperationChart() {
             {chartConfigs.map((config, index) => (
                 <div
                     key={index}
-                    style={{ width: "100%", height: 200, color: "white" }}
+                    style={{ width: "100%", height: 200, color: "text-body" }}
                 >
                     <ResponsiveContainer>
                         <ScatterChart
@@ -80,12 +80,18 @@ export default function OperationChart() {
                                 tickFormatter={(unix) =>
                                     new Date(unix).toLocaleDateString()
                                 }
-                                tick={{ fill: "white", fontSize: 12 }}
+                                tick={{
+                                    fill: "var(--text-body)",
+                                    fontSize: 12,
+                                }}
                             />
                             <YAxis
                                 dataKey="y"
                                 domain={config.domain}
-                                tick={{ fill: "white", fontSize: 12 }}
+                                tick={{
+                                    fill: "var(--text-body)",
+                                    fontSize: 12,
+                                }}
                             />
                             <Tooltip
                                 formatter={(value) => [

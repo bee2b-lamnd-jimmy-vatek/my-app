@@ -37,11 +37,11 @@ export default function MembraneChart({
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
                         dataKey="date"
-                        tick={{ fill: "white" }}
+                        tick={{ fill: "var(--text-body)" }}
                         tickLine={{ stroke: "#6B7280" }}
                     />
                     <YAxis
-                        tick={{ fill: "white" }}
+                        tick={{ fill: "var(--text-body)" }}
                         tickLine={{ stroke: "#6B7280" }}
                     />
                     <Tooltip />
@@ -49,21 +49,21 @@ export default function MembraneChart({
                     <Line
                         type="monotone"
                         dataKey="actual"
-                        stroke="#DC2626"
+                        stroke="var(--chart-violet)"
                         strokeWidth={2}
                         name={`Actual ${metricName}`}
                     />
                     <Line
                         type="monotone"
                         dataKey="predicted"
-                        stroke="#2563EB"
+                        stroke="var(--chart-pink)"
                         strokeWidth={2}
                         name={`Predicted ${metricName}`}
                     />
                     <Line
                         type="monotone"
                         dataKey="optimized"
-                        stroke="#059669"
+                        stroke="var(--chart-green)"
                         strokeWidth={2}
                         name={`Optimized ${metricName}`}
                     />
