@@ -1,4 +1,5 @@
-import { memo } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { memo, useState } from "react";
 import {
   ScatterChart,
   Scatter,
@@ -9,25 +10,101 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-
-interface DataPoint {
-  x: number;
-  y: number;
-}
+import {
+  useDownsampling,
+  type DownsamplingAlgorithm,
+} from "../hook/useDownsampling";
 
 interface SingleChartProps {
   config: {
     key: string;
-    data: DataPoint[];
+    data: any[];
     color: string;
     label: string;
     domain: [number, number];
   };
 }
 
+const ALGORITHMS: { value: DownsamplingAlgorithm; label: string }[] = [
+  { value: "lttb", label: "LTTB (Best)" },
+  { value: "min-max", label: "Min-Max" },
+  { value: "every-nth", label: "Every Nth" },
+  { value: "average", label: "Average" },
+];
+
+const THRESHOLDS = [50, 100, 200, 500];
+
 const SingleChart = memo(({ config }: SingleChartProps) => {
+  const [algorithm, setAlgorithm] = useState<DownsamplingAlgorithm>("lttb");
+  const [threshold, setThreshold] = useState(200);
+  const [showOriginal, setShowOriginal] = useState(false);
+
+  const downsampledData = useDownsampling(config.data, algorithm, threshold);
+  const displayData = showOriginal ? config.data : downsampledData;
+
+  const compressionRatio = (
+    (1 - downsampledData.length / config.data.length) *
+    100
+  ).toFixed(1);
+
   return (
-    <div style={{ width: "100%", height: 200, color: "var(--text-body)" }}>
+    <div style={{ width: "100%", height: 250, color: "var(--text-body)" }}>
+      {/* Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3 p-2 bg-gray-50 rounded">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">{config.label}</span>
+          <span className="text-xs text-gray-500">
+            {displayData.length}/{config.data.length} points
+          </span>
+          {!showOriginal && (
+            <span className="text-xs text-green-600">
+              ({compressionRatio}% compressed)
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <select
+            value={algorithm}
+            onChange={(e) =>
+              setAlgorithm(e.target.value as DownsamplingAlgorithm)
+            }
+            className="text-xs border rounded px-2 py-1"
+            disabled={showOriginal}
+          >
+            {ALGORITHMS.map((algo) => (
+              <option key={algo.value} value={algo.value}>
+                {algo.label}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={threshold}
+            onChange={(e) => setThreshold(Number(e.target.value))}
+            className="text-xs border rounded px-2 py-1"
+            disabled={showOriginal}
+          >
+            {THRESHOLDS.map((t) => (
+              <option key={t} value={t}>
+                Max {t} points
+              </option>
+            ))}
+          </select>
+
+          <label className="flex items-center gap-1 text-xs">
+            <input
+              type="checkbox"
+              checked={showOriginal}
+              onChange={(e) => setShowOriginal(e.target.checked)}
+              className="rounded"
+            />
+            Show original
+          </label>
+        </div>
+      </div>
+
+      {/* Chart */}
       <ResponsiveContainer>
         <ScatterChart
           margin={{
@@ -62,15 +139,29 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
               new Date(Number(label)).toLocaleDateString()
             }
           />
-          <Legend align="right" verticalAlign="top" />
+          <Legend />
           <Scatter
-            name={config.label}
-            data={config.data}
+            name={showOriginal ? "Original Data" : `Downsampled (${algorithm})`}
+            data={displayData}
             fill={config.color}
-            r={2}
+            r={showOriginal ? 1 : 3}
+            opacity={showOriginal ? 0.6 : 1}
           />
         </ScatterChart>
       </ResponsiveContainer>
+
+      {/* Info */}
+      {!showOriginal && (
+        <div className="text-xs text-gray-500 mt-2 text-center">
+          Algorithm: {algorithm} • Threshold: {threshold} points • Compression:{" "}
+          {compressionRatio}% • Render time:{" "}
+          {displayData.length < 100
+            ? "Fast"
+            : displayData.length < 300
+            ? "Medium"
+            : "Slow"}
+        </div>
+      )}
     </div>
   );
 });
