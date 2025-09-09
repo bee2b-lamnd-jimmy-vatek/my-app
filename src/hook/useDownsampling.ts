@@ -143,13 +143,13 @@ export const useDownsampling = (
 
     switch (algorithm) {
       case 'lttb':
-        return lttbDownsample(data, threshold);
+        return lttbDownsample(data, Math.min(threshold, data.length));
       case 'every-nth':
-        return everyNthDownsample(data, threshold);
+        return everyNthDownsample(data, Math.min(threshold, data.length));
       case 'min-max':
-        return minMaxDownsample(data, threshold);
+        return minMaxDownsample(data, Math.min(threshold, data.length));
       case 'average':
-        return averageDownsample(data, threshold);
+        return averageDownsample(data, Math.min(threshold, data.length));
       default:
         return data;
     }
