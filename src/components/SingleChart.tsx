@@ -50,10 +50,12 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
   return (
     <div style={{ width: "100%", height: 250, color: "var(--text-body)" }}>
       {/* Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-3 p-2 bg-gray-50 rounded">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3 p-2 bg-bg-card rounded">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">{config.label}</span>
-          <span className="text-xs text-gray-500">
+          <span className="text-sm font-medium text-text-body">
+            {config.label}
+          </span>
+          <span className="text-xs text-text-caption">
             {displayData.length}/{config.data.length} points
           </span>
           {!showOriginal && (
@@ -69,7 +71,7 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
             onChange={(e) =>
               setAlgorithm(e.target.value as DownsamplingAlgorithm)
             }
-            className="text-xs border rounded px-2 py-1"
+            className="text-xs border rounded px-2 py-1 bg-background-input text-text-caption"
             disabled={showOriginal}
           >
             {ALGORITHMS.map((algo) => (
@@ -82,7 +84,7 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
           <select
             value={threshold}
             onChange={(e) => setThreshold(Number(e.target.value))}
-            className="text-xs border rounded px-2 py-1"
+            className="text-xs border rounded px-2 py-1 bg-background-input text-text-caption"
             disabled={showOriginal}
           >
             {THRESHOLDS.map((t) => (
@@ -97,7 +99,7 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
               type="checkbox"
               checked={showOriginal}
               onChange={(e) => setShowOriginal(e.target.checked)}
-              className="rounded"
+              className="rounded bg-background-input text-text-caption"
             />
             Show original
           </label>
