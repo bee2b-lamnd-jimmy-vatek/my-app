@@ -1,13 +1,23 @@
 import OperationTrendFilters from "../components/OperationTrendFilters";
 import OperationChart from "../components/OperationChart";
+import { useState } from "react";
 
 export default function OperationTrends() {
-    return (
-        <div className="p-6">
-            <div className="flex flex-col bg-bg-card ">
-                <OperationTrendFilters />
-                <OperationChart />
-            </div>
-        </div>
-    );
+  const [selectedTags, setSelectedTags] = useState<string[]>([
+    "flux",
+    "perm",
+    "tmp",
+  ]);
+
+  return (
+    <div className="p-6">
+      <div className="flex flex-col bg-bg-card ">
+        <OperationTrendFilters
+          selectedTags={selectedTags}
+          setSelectedTags={setSelectedTags}
+        />
+        <OperationChart selectedTags={selectedTags} />
+      </div>
+    </div>
+  );
 }
