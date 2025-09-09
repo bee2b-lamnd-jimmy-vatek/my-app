@@ -30,7 +30,8 @@ html.blue {
     --background-input: white;
     --bg-card: white;
     --button-bg: #056fcf;
-
+    --select-bg:#ebf5ff;
+    --select-text: #007EFF;
     --foreground: white;
     --text-header: white;
     --text-body: black;
@@ -73,7 +74,8 @@ html.dark {
     --background-input: black;
     --bg-card: #333333;
     --button-bg: #3399ff;
-
+    --select-bg:#333333;
+    --select-text: #f3f3f3;
     --foreground: #f3f3f3;
     --text-header: #f3f3f3;
     --text-body: #f3f3f3;
@@ -116,7 +118,8 @@ html.indigo {
     --background-input: white;
     --bg-card: white;
     --button-bg: #056fcf;
-
+    --select-bg:#ebf5ff;
+    --select-text: #007EFF;
     --foreground: white;
     --text-header: white;
     --text-body: #00091a;

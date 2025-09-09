@@ -12,7 +12,8 @@ export default {
                 "background-input": "var(--background-input)",
                 "bg-card": "var(--bg-card)",
                 "button-bg": "var(--button-bg)",
-
+                "select-bg": "var(--select-bg)",
+                "select-text": "var(--select-text)",
                 "text-header": "var(--text-header)",
                 "text-body": "var(--text-body)",
                 "text-caption": "var(--text-caption)",

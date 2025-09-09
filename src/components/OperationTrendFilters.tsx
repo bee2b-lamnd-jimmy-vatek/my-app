@@ -57,10 +57,10 @@ export default function OperationTrendFilters({
           {selectedTags.map((tag) => (
             <span
               key={tag}
-              className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium"
+              className="flex items-center gap-1 px-2 py-1 bg-select-bg text-select-text rounded-lg text-xs font-medium"
             >
               <span
-                className="w-3 h-3 text-text-body cursor-pointer flex items-center mb-[2px]"
+                className="w-3 h-3 text-select-text cursor-pointer flex items-center mb-[2px]"
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleTag(tag);
