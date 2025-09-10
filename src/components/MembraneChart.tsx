@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ScatterChart,
   Scatter,
@@ -72,21 +73,37 @@ export default function MembraneChart({
   };
 
   const CustomCircle = ({ cx, cy, fill }: any) => (
-    <circle cx={cx} cy={cy} r={2} fill={fill}/>
+    <circle cx={cx} cy={cy} r={2} fill={fill} />
   );
 
-  // Group data by series
   const seriesData = data.reduce((acc, point) => {
-    const key = point.isCleaning ? `${point.series}Cleaning` : point.series;
+    const key =
+      point.series === "actual"
+        ? "actual"
+        : point.isCleaning
+        ? `${point.series}Cleaning`
+        : point.series;
+
     if (!acc[key]) {
       acc[key] = [];
     }
+
+    const x = new Date(point.date).valueOf();
+
+    // Nếu là "actual" thì kiểm tra trùng x
+    if (key === "actual") {
+      const exists = acc[key].some((p) => p.x === x);
+      if (exists) {
+        return acc; // bỏ qua không push thêm
+      }
+    }
+
     acc[key].push({
-      // Convert date string to Date object's timestamp in milliseconds
-      x: new Date(point.date).valueOf(),
+      x,
       y: point.value,
       color: point.color,
     });
+
     return acc;
   }, {} as Record<string, { x: number; y: number; color: string }[]>);
 
@@ -106,8 +123,8 @@ export default function MembraneChart({
           <XAxis
             dataKey="x"
             type="number"
-            scale="time"  // Add this line
-            domain={['auto', 'auto']}  // Change to auto scaling
+            scale="time" // Add this line
+            domain={["auto", "auto"]} // Change to auto scaling
             tickFormatter={(unix) =>
               new Date(unix).toLocaleDateString("en-GB", {
                 day: "2-digit",

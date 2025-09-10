@@ -46,7 +46,12 @@ function generateMockData(
       data.push({
         date: date.toISOString().split("T")[0],
         value: Number(value.toFixed(2)),
-        color: currentSeries.color,
+        color:
+          currentSeries.name === "predicted"
+            ? "lightblue"
+            : currentSeries.name === "optimized"
+            ? "lightgreen"
+            : currentSeries.color,
         series: currentSeries.name,
         isCleaning: true,
       });
@@ -59,17 +64,15 @@ function generateMockData(
 // Example usage with adjusted number of points
 const permeabilityData = generateMockData(
   "2024-06-01",
-  1200,
+  1000,
   [
     { name: "actual", color: "red" },
     { name: "predicted", color: "blue" },
     { name: "optimized", color: "green" },
-    { name: "predictedCleaning", color: "lightblue" },
-    { name: "optimizedCleaning", color: "lightgreen" },
   ],
   140,
   3,
-  15
+  30
 );
 
 const tmpData = generateMockData(
