@@ -109,14 +109,14 @@ export default function MembraneChart({
 
   return (
     <div className="p-4 m-4 bg-white rounded-2xl shadow">
-      <h2 className="text-lg font-semibold mb-4">{title}</h2>
+      <h2 className="text-lg font-semibold mb-4 ml-4">{title}</h2>
       <ResponsiveContainer width="100%" height={350}>
         <ScatterChart
           margin={{
             top: 20,
             right: 20,
             bottom: 20,
-            left: 20,
+            left: 40,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
@@ -139,6 +139,8 @@ export default function MembraneChart({
               value: metricName,
               angle: -90,
               position: "insideLeft",
+              dx: -35,
+              style: { textAnchor: "middle" },
             }}
           />
           <Tooltip
