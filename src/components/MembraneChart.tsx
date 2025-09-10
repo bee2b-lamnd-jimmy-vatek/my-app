@@ -72,7 +72,7 @@ export default function MembraneChart({
   };
 
   const CustomCircle = ({ cx, cy, fill }: any) => (
-    <circle cx={cx} cy={cy} r={8} fill={fill} stroke="black" />
+    <circle cx={cx} cy={cy} r={2} fill={fill}/>
   );
 
   // Group data by series
@@ -82,7 +82,8 @@ export default function MembraneChart({
       acc[key] = [];
     }
     acc[key].push({
-      x: new Date(point.date).getTime(),
+      // Convert date string to Date object's timestamp in milliseconds
+      x: new Date(point.date).valueOf(),
       y: point.value,
       color: point.color,
     });
@@ -105,7 +106,8 @@ export default function MembraneChart({
           <XAxis
             dataKey="x"
             type="number"
-            domain={["dataMin", "dataMax"]}
+            scale="time"  // Add this line
+            domain={['auto', 'auto']}  // Change to auto scaling
             tickFormatter={(unix) =>
               new Date(unix).toLocaleDateString("en-GB", {
                 day: "2-digit",
@@ -123,13 +125,14 @@ export default function MembraneChart({
             }}
           />
           <Tooltip
-            formatter={(value) => [`${value}`, metricName]}
-            labelFormatter={(label) =>
-              new Date(label).toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "short",
-              })
-            }
+            formatter={(value, name) => {
+              // Only return the y value if it's the value property
+              if (name === "y") {
+                return [`${value}`, metricName];
+              }
+            }}
+            // Remove labelFormatter to hide the x-axis date
+            labelFormatter={() => ""}
           />
           <Legend content={<TriangleLegend />} />
 

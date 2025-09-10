@@ -8,7 +8,7 @@ function generateMockData(
   series: Array<{ name: string; color: string }>,
   startValue: number,
   noise: number,
-  cleaningEvery = 20
+  cleaningEvery = 50
 ) {
   const data: Array<{
     date: string;
@@ -27,7 +27,7 @@ function generateMockData(
     const seriesIndex = Math.floor(i / pointsPerSeries);
 
     // Skip if we've gone beyond our series array
-    if (seriesIndex >= series.length) break;
+    if (seriesIndex >= series.length || seriesIndex > 2) break;
 
     const currentSeries = series[seriesIndex];
     const localIdx = i - seriesIndex * pointsPerSeries;
@@ -59,11 +59,13 @@ function generateMockData(
 // Example usage with adjusted number of points
 const permeabilityData = generateMockData(
   "2024-06-01",
-  300,
+  1200,
   [
     { name: "actual", color: "red" },
     { name: "predicted", color: "blue" },
     { name: "optimized", color: "green" },
+    { name: "predictedCleaning", color: "lightblue" },
+    { name: "optimizedCleaning", color: "lightgreen" },
   ],
   140,
   3,
