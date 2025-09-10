@@ -68,7 +68,8 @@ const downsampleData = (data: any[], threshold: number) => {
 
 // Custom tooltip formatter
 const formatTooltip = (value: number, name: string, props: any) => {
-  return [`${Number(value).toFixed(2)}`, name];
+  const seriesName = props.payload?.series || name;
+  return [`${Number(value).toFixed(2)}`, seriesName];
 };
 
 // Custom label formatter
