@@ -12,11 +12,10 @@ import {
 
 type DataPoint = {
   date: string;
-  actual: number;
-  predicted: number;
-  optimized: number;
-  predictedCleaning?: number;
-  optimizedCleaning?: number;
+  value: number;
+  color: string;
+  series: string;
+  isCleaning?: boolean;
 };
 
 type MembraneChartProps = {
@@ -65,7 +64,6 @@ export default function MembraneChart({
 }: MembraneChartProps) {
   const TriangleShape = (props: any) => {
     const { cx, cy, fill } = props;
-
     return (
       <svg x={cx - 7} y={cy - 7} width={14} height={14} fill={fill}>
         <polygon points="0,0 14,0 7,14" fill={fill} />
@@ -77,30 +75,19 @@ export default function MembraneChart({
     <circle cx={cx} cy={cy} r={8} fill={fill} stroke="black" />
   );
 
-  const actualData = data.map((d) => ({
-    x: new Date(d.date).getTime(),
-    y: d.actual,
-  }));
-  const predictedData = data.map((d) => ({
-    x: new Date(d.date).getTime(),
-    y: d.predicted,
-  }));
-  const optimizedData = data.map((d) => ({
-    x: new Date(d.date).getTime(),
-    y: d.optimized,
-  }));
-  const predictedCleaningData = data
-    .filter((d) => d.predictedCleaning !== undefined)
-    .map((d) => ({
-      x: new Date(d.date).getTime(),
-      y: d.predictedCleaning!,
-    }));
-  const optimizedCleaningData = data
-    .filter((d) => d.optimizedCleaning !== undefined)
-    .map((d) => ({
-      x: new Date(d.date).getTime(),
-      y: d.optimizedCleaning!,
-    }));
+  // Group data by series
+  const seriesData = data.reduce((acc, point) => {
+    const key = point.isCleaning ? `${point.series}Cleaning` : point.series;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push({
+      x: new Date(point.date).getTime(),
+      y: point.value,
+      color: point.color,
+    });
+    return acc;
+  }, {} as Record<string, { x: number; y: number; color: string }[]>);
 
   return (
     <div className="p-4 m-4 bg-white rounded-2xl shadow">
@@ -146,39 +133,19 @@ export default function MembraneChart({
           />
           <Legend content={<TriangleLegend />} />
 
-          {/* Permeability series */}
-          <Scatter
-            name={`Actual ${metricName}`}
-            data={actualData}
-            fill="red"
-            shape="circle"
-          />
-          <Scatter
-            name={`Predicted ${metricName}`}
-            data={predictedData}
-            fill="blue"
-            shape="circle"
-          />
-          <Scatter
-            name={`Optimized ${metricName}`}
-            data={optimizedData}
-            fill="green"
-            shape="circle"
-          />
-
-          {/* Cleaning events series */}
-          <Scatter
-            name="Predicted cleaning events"
-            data={predictedCleaningData}
-            fill="skyblue"
-            shape={<TriangleShape fill="skyblue" />}
-          />
-          <Scatter
-            name="Optimized cleaning events"
-            data={optimizedCleaningData}
-            fill="limegreen"
-            shape={<TriangleShape fill="limegreen" />}
-          />
+          {/* Render main series */}
+          {Object.entries(seriesData).map(([key, points]) => {
+            const isCleaning = key.includes("Cleaning");
+            return (
+              <Scatter
+                key={key}
+                name={key}
+                data={points}
+                fill={points[0]?.color}
+                shape={isCleaning ? <TriangleShape /> : <CustomCircle />}
+              />
+            );
+          })}
         </ScatterChart>
       </ResponsiveContainer>
     </div>

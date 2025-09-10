@@ -5,65 +5,78 @@ import MembraneChart from "../components/MembraneChart";
 function generateMockData(
   startDate: string,
   numPoints: number,
-  seriesNames: string[],
+  series: Array<{ name: string; color: string }>,
   startValue: number,
   noise: number,
   cleaningEvery = 20
 ) {
-  const data: any[] = [];
-  const start = new Date(startDate);
+  const data: Array<{
+    date: string;
+    value: number;
+    color: string;
+    series: string;
+    isCleaning?: boolean;
+  }> = [];
 
-  // Tính số điểm cho mỗi series (chia đều timeline)
-  const pointsPerSeries = Math.floor(numPoints / seriesNames.length);
+  const start = new Date(startDate);
+  const pointsPerSeries = Math.floor(numPoints / series.length);
 
   for (let i = 0; i < numPoints; i++) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
-
-    // Xác định series nào nên có giá trị tại điểm này
     const seriesIndex = Math.floor(i / pointsPerSeries);
-    const currentSeries =
-      seriesNames[Math.min(seriesIndex, seriesNames.length - 1)];
 
-    const point: Record<string, number | string | null> = {
+    // Skip if we've gone beyond our series array
+    if (seriesIndex >= series.length) break;
+
+    const currentSeries = series[seriesIndex];
+    const localIdx = i - seriesIndex * pointsPerSeries;
+    const value = startValue - localIdx * 0.2 + (Math.random() - 0.5) * noise;
+
+    // Add main data point
+    data.push({
       date: date.toISOString().split("T")[0],
-    };
-
-    // Khởi tạo tất cả series là null
-    seriesNames.forEach((name) => {
-      point[name] = null;
+      value: Number(value.toFixed(2)),
+      color: currentSeries.color,
+      series: currentSeries.name,
     });
 
-    // Chỉ set giá trị cho series hiện tại
-    if (seriesIndex < seriesNames.length) {
-      const localIdx = i - seriesIndex * pointsPerSeries;
-      const value = startValue - localIdx * 0.2 + (Math.random() - 0.5) * noise;
-      point[currentSeries] = Number(value.toFixed(2));
-
-      // Thêm cleaning event nếu cần
-      if (i % cleaningEvery === 0) {
-        point[`${currentSeries}Cleaning`] = point[currentSeries];
-      }
+    // Add cleaning event if needed
+    if (i % cleaningEvery === 0) {
+      data.push({
+        date: date.toISOString().split("T")[0],
+        value: Number(value.toFixed(2)),
+        color: currentSeries.color,
+        series: currentSeries.name,
+        isCleaning: true,
+      });
     }
-
-    data.push(point);
   }
 
   return data;
 }
 
+// Example usage with adjusted number of points
 const permeabilityData = generateMockData(
   "2024-06-01",
-  100,
-  ["actual", "predicted", "optimized"],
+  300,
+  [
+    { name: "actual", color: "red" },
+    { name: "predicted", color: "blue" },
+    { name: "optimized", color: "green" },
+  ],
   140,
   3,
   15
 );
+
 const tmpData = generateMockData(
   "2024-06-01",
-  100,
-  ["actual", "predicted"],
+  200,
+  [
+    { name: "actual", color: "red" },
+    { name: "predicted", color: "blue" },
+  ],
   35,
   1,
   12
