@@ -26,9 +26,9 @@ function generateMockData(
   );
 
   const daysPerSeries = [
-    Math.floor(totalDays * 0.5), // actual - 50%
-    Math.floor(totalDays * 0.3), // predicted - 30%
-    Math.floor(totalDays * 0.2), // optimized - 20%
+    Math.floor(totalDays * 0.5),
+    Math.floor(totalDays * 0.3),
+    Math.floor(totalDays * 0.2),
   ];
 
   let currentDate = new Date(start);
@@ -38,14 +38,22 @@ function generateMockData(
     const currentSeries = series[seriesIndex];
     const seriesDays = daysPerSeries[seriesIndex];
 
+    let lastValue = startValue;
+
     for (let i = 0; i < seriesDays; i++) {
       if (dayCount >= totalDays) break;
 
       const progress = dayCount / totalDays;
-      const value =
-        startValue -
-        (startValue - endValue) * progress +
-        (Math.random() - 0.5) * noise;
+
+      // Random walk + linear trend + sinusoidal fluctuation
+      const trend = startValue - (startValue - endValue) * progress;
+      const fluctuation = Math.sin(dayCount / 10 + seriesIndex) * noise; // sin wave
+      const randomNoise = (Math.random() - 0.5) * noise;
+
+      const value = Math.max(
+        0,
+        lastValue * 0.9 + trend * 0.1 + fluctuation + randomNoise
+      );
 
       data.push({
         date: currentDate.toISOString().split("T")[0],
@@ -65,6 +73,7 @@ function generateMockData(
         });
       }
 
+      lastValue = value;
       currentDate.setDate(currentDate.getDate() + 1);
       dayCount++;
     }
@@ -81,8 +90,8 @@ const permeabilityData = generateMockData(
     { name: "predicted", color: "blue" },
     { name: "optimized", color: "green" },
   ],
-  1000, // start value
-  100, // end value
+  200, // start value
+  30, // end value
   3, // noise
   40 // cleaning every 45 days
 );
@@ -97,7 +106,7 @@ const tmpData = generateMockData(
   40, // start value
   25, // end value
   1, // noise
-  30 // cleaning every 30 days
+  20 // cleaning every 30 days
 );
 
 export default function MembranePrediction() {
