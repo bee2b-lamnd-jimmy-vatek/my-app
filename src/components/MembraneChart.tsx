@@ -10,6 +10,7 @@ import {
   Legend,
   type LegendProps,
 } from "recharts";
+import { useState, useMemo } from "react";
 
 type DataPoint = {
   date: string;
@@ -57,59 +58,173 @@ function TriangleLegend(props: LegendProps) {
   );
 }
 
+// Simple downsampling function
+const downsampleData = (data: any[], threshold: number) => {
+  if (data.length <= threshold) return data;
+
+  const everyNth = Math.ceil(data.length / threshold);
+  return data.filter((_, index) => index % everyNth === 0);
+};
+
+// Custom tooltip formatter
+const formatTooltip = (value: number, name: string, props: any) => {
+  return [`${Number(value).toFixed(2)}`, name];
+};
+
+// Custom label formatter
+const formatTooltipLabel = (label: number) => {
+  return new Date(label).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
 export default function MembraneChart({
   data,
   title,
   metricName,
   domain,
 }: MembraneChartProps) {
+  const [showOriginal, setShowOriginal] = useState(false);
+  const [threshold, setThreshold] = useState(200);
+
+  // Memoize series data processing
+  const seriesData = useMemo(() => {
+    return data.reduce((acc, point) => {
+      const key =
+        point.series === "actual"
+          ? "actual"
+          : point.isCleaning
+          ? `${point.series}Cleaning`
+          : point.series;
+
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+
+      const x = new Date(point.date).valueOf();
+
+      if (key === "actual") {
+        const exists = acc[key].some((p) => p.x === x);
+        if (exists) {
+          return acc;
+        }
+      }
+
+      acc[key].push({
+        x,
+        y: point.value,
+        color: point.color,
+        series: point.series,
+        originalSeries: point.series, // Giữ lại thông tin series gốc
+        isCleaning: point.isCleaning,
+      });
+
+      return acc;
+    }, {} as Record<string, { x: number; y: number; color: string; series: string; originalSeries: string; isCleaning?: boolean }[]>);
+  }, [data]);
+
+  // Memoize downsampled data
+  const displayData = useMemo(() => {
+    return showOriginal
+      ? seriesData
+      : Object.entries(seriesData).reduce((acc, [key, points]) => {
+          acc[key] = downsampleData(points, threshold);
+          return acc;
+        }, {} as Record<string, { x: number; y: number; color: string; series: string; originalSeries: string; isCleaning?: boolean }[]>);
+  }, [seriesData, showOriginal, threshold]);
+
+  // Calculate compression ratio
+  const { totalOriginalPoints, totalDownsampledPoints, compressionRatio } =
+    useMemo(() => {
+      const totalOriginal = Object.values(seriesData).reduce(
+        (sum, points) => sum + points.length,
+        0
+      );
+      const totalDownsampled = Object.values(displayData).reduce(
+        (sum, points) => sum + points.length,
+        0
+      );
+      const ratio = ((1 - totalDownsampled / totalOriginal) * 100).toFixed(1);
+
+      return {
+        totalOriginalPoints: totalOriginal,
+        totalDownsampledPoints: totalDownsampled,
+        compressionRatio: ratio,
+      };
+    }, [seriesData, displayData]);
+
+  // Memoize shapes
   const TriangleShape = (props: any) => {
     const { cx, cy, fill } = props;
     return (
       <svg x={cx - 7} y={cy - 7} width={14} height={14} fill={fill}>
-        <polygon points="0,0 14,0 7,14" fill={fill} />
+        <polygon points="7,0 14,14 0,14" fill={fill} />
       </svg>
     );
   };
 
-  const CustomCircle = ({ cx, cy, fill }: any) => (
-    <circle cx={cx} cy={cy} r={2} fill={fill} />
-  );
-
-  const seriesData = data.reduce((acc, point) => {
-    const key =
-      point.series === "actual"
-        ? "actual"
-        : point.isCleaning
-        ? `${point.series}Cleaning`
-        : point.series;
-
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-
-    const x = new Date(point.date).valueOf();
-
-    // Nếu là "actual" thì kiểm tra trùng x
-    if (key === "actual") {
-      const exists = acc[key].some((p) => p.x === x);
-      if (exists) {
-        return acc; // bỏ qua không push thêm
-      }
-    }
-
-    acc[key].push({
-      x,
-      y: point.value,
-      color: point.color,
-    });
-
-    return acc;
-  }, {} as Record<string, { x: number; y: number; color: string }[]>);
+  const CustomCircle = (props: any) => {
+    const { cx, cy, fill } = props;
+    return <circle cx={cx} cy={cy} r={4} fill={fill} />;
+  };
 
   return (
     <div className="p-4 m-4 bg-white rounded-2xl shadow">
       <h2 className="text-lg font-semibold mb-4 ml-4">{title}</h2>
+
+      {/* Simple Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-800">
+            {metricName}
+          </span>
+          <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded">
+            {totalDownsampledPoints}/{totalOriginalPoints} points
+          </span>
+          {!showOriginal && (
+            <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+              {compressionRatio}% compressed
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3">
+          {/* Threshold Select */}
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-500 mb-1">Max Points</label>
+            <select
+              value={threshold}
+              onChange={(e) => setThreshold(Number(e.target.value))}
+              className="text-xs border rounded px-2 py-1 w-20"
+              disabled={showOriginal}
+            >
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={200}>200</option>
+              <option value={500}>500</option>
+              <option value={1000}>1000</option>
+              <option value={1500}>1500</option>
+            </select>
+          </div>
+
+          {/* Toggle Original */}
+          <div className="flex flex-col">
+            <label className="text-xs text-gray-500 mb-1">View</label>
+            <label className="flex items-center gap-1 text-xs">
+              <input
+                type="checkbox"
+                checked={showOriginal}
+                onChange={(e) => setShowOriginal(e.target.checked)}
+                className="rounded"
+              />
+              Original
+            </label>
+          </div>
+        </div>
+      </div>
+
       <ResponsiveContainer width="100%" height={350}>
         <ScatterChart
           margin={{
@@ -123,8 +238,8 @@ export default function MembraneChart({
           <XAxis
             dataKey="x"
             type="number"
-            scale="time" // Add this line
-            domain={["auto", "auto"]} // Change to auto scaling
+            scale="time"
+            domain={["auto", "auto"]}
             tickFormatter={(unix) =>
               new Date(unix).toLocaleDateString("en-GB", {
                 day: "2-digit",
@@ -139,32 +254,36 @@ export default function MembraneChart({
               value: metricName,
               angle: -90,
               position: "insideLeft",
-              dx: -35,
+              dx: -60,
               style: { textAnchor: "middle" },
             }}
           />
           <Tooltip
-            formatter={(value, name) => {
-              // Only return the y value if it's the value property
-              if (name === "y") {
-                return [`${value}`, metricName];
-              }
+            formatter={formatTooltip}
+            labelFormatter={formatTooltipLabel}
+            contentStyle={{
+              backgroundColor: "white",
+              border: "1px solid #e5e7eb",
+              borderRadius: "0.375rem",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
             }}
-            // Remove labelFormatter to hide the x-axis date
-            labelFormatter={() => ""}
           />
-          <Legend content={<TriangleLegend />} />
+          <Legend content={TriangleLegend} />
 
           {/* Render main series */}
-          {Object.entries(seriesData).map(([key, points]) => {
+          {Object.entries(displayData).map(([key, points]) => {
             const isCleaning = key.includes("Cleaning");
+            const displayName = isCleaning
+              ? `${key.replace("Cleaning", "")} Cleaning`
+              : key;
+
             return (
               <Scatter
                 key={key}
-                name={key}
+                name={displayName}
                 data={points}
                 fill={points[0]?.color}
-                shape={isCleaning ? <TriangleShape /> : <CustomCircle />}
+                shape={isCleaning ? TriangleShape : CustomCircle}
               />
             );
           })}

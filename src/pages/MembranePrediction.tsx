@@ -4,11 +4,12 @@ import MembraneChart from "../components/MembraneChart";
 
 function generateMockData(
   startDate: string,
-  numPoints: number,
+  endDate: string,
   series: Array<{ name: string; color: string }>,
   startValue: number,
+  endValue: number,
   noise: number,
-  cleaningEvery = 50
+  cleaningEvery = 30
 ) {
   const data: Array<{
     date: string;
@@ -19,72 +20,84 @@ function generateMockData(
   }> = [];
 
   const start = new Date(startDate);
-  const pointsPerSeries = Math.floor(numPoints / series.length);
+  const end = new Date(endDate);
+  const totalDays = Math.floor(
+    (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+  );
 
-  for (let i = 0; i < numPoints; i++) {
-    const date = new Date(start);
-    date.setDate(start.getDate() + i);
-    const seriesIndex = Math.floor(i / pointsPerSeries);
+  const daysPerSeries = [
+    Math.floor(totalDays * 0.5), // actual - 50%
+    Math.floor(totalDays * 0.3), // predicted - 30%
+    Math.floor(totalDays * 0.2), // optimized - 20%
+  ];
 
-    // Skip if we've gone beyond our series array
-    if (seriesIndex >= series.length || seriesIndex > 2) break;
+  let currentDate = new Date(start);
+  let dayCount = 0;
 
+  for (let seriesIndex = 0; seriesIndex < series.length; seriesIndex++) {
     const currentSeries = series[seriesIndex];
-    const localIdx = i - seriesIndex * pointsPerSeries;
-    const value = startValue - localIdx * 0.2 + (Math.random() - 0.5) * noise;
+    const seriesDays = daysPerSeries[seriesIndex];
 
-    // Add main data point
-    data.push({
-      date: date.toISOString().split("T")[0],
-      value: Number(value.toFixed(2)),
-      color: currentSeries.color,
-      series: currentSeries.name,
-    });
+    for (let i = 0; i < seriesDays; i++) {
+      if (dayCount >= totalDays) break;
 
-    // Add cleaning event if needed
-    if (i % cleaningEvery === 0) {
+      const progress = dayCount / totalDays;
+      const value =
+        startValue -
+        (startValue - endValue) * progress +
+        (Math.random() - 0.5) * noise;
+
       data.push({
-        date: date.toISOString().split("T")[0],
+        date: currentDate.toISOString().split("T")[0],
         value: Number(value.toFixed(2)),
-        color:
-          currentSeries.name === "predicted"
-            ? "lightblue"
-            : currentSeries.name === "optimized"
-            ? "lightgreen"
-            : currentSeries.color,
+        color: currentSeries.color,
         series: currentSeries.name,
-        isCleaning: true,
       });
+
+      if (currentSeries.name !== "actual" && dayCount % cleaningEvery === 0) {
+        data.push({
+          date: currentDate.toISOString().split("T")[0],
+          value: Number(value.toFixed(2)),
+          color:
+            currentSeries.name === "predicted" ? "lightblue" : "lightgreen",
+          series: currentSeries.name,
+          isCleaning: true,
+        });
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+      dayCount++;
     }
   }
 
   return data;
 }
 
-// Example usage with adjusted number of points
 const permeabilityData = generateMockData(
   "2024-06-01",
-  1000,
+  "2025-06-01",
   [
     { name: "actual", color: "red" },
     { name: "predicted", color: "blue" },
     { name: "optimized", color: "green" },
   ],
-  140,
-  3,
-  30
+  145, // start value
+  100, // end value
+  3, // noise
+  40 // cleaning every 45 days
 );
 
 const tmpData = generateMockData(
   "2024-06-01",
-  200,
+  "2025-06-01",
   [
     { name: "actual", color: "red" },
     { name: "predicted", color: "blue" },
   ],
-  35,
-  1,
-  12
+  40, // start value
+  25, // end value
+  1, // noise
+  30 // cleaning every 30 days
 );
 
 export default function MembranePrediction() {
@@ -103,7 +116,7 @@ export default function MembranePrediction() {
           <input
             type="date"
             className="border rounded-lg px-2 py-1 text-sm text-text-caption bg-background-input hover:border-gray-300 focus:outline-none"
-            defaultValue="2024-09-15"
+            defaultValue="2025-06-01"
           />
         </div>
         <select className="rounded-lg px-3 py-1 text-sm text-text-caption border bg-background-input hover:border-gray-300 focus:outline-none">
@@ -124,13 +137,13 @@ export default function MembranePrediction() {
         data={permeabilityData}
         title="Permeability vs Predicted Permeability"
         metricName="Permeability"
-        domain={[100, 145]}
+        domain={[90, 150]}
       />
       <MembraneChart
         data={tmpData}
         title="TMP vs Predicted TMP"
         metricName="TMP"
-        domain={[25, 40]}
+        domain={[20, 45]}
       />
     </div>
   );
