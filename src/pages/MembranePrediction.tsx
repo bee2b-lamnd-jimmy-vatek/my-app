@@ -81,7 +81,7 @@ const permeabilityData = generateMockData(
     { name: "predicted", color: "blue" },
     { name: "optimized", color: "green" },
   ],
-  145, // start value
+  1000, // start value
   100, // end value
   3, // noise
   40 // cleaning every 45 days

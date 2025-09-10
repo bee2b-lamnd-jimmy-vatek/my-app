@@ -170,6 +170,30 @@ export default function MembraneChart({
     return <circle cx={cx} cy={cy} r={4} fill={fill} />;
   };
 
+  // Flatten all points into a single array
+  const flatPoints = Object.entries(displayData).flatMap(([key, points]) =>
+    points.map((point) => ({
+      ...point,
+      displayName: key.includes("Cleaning")
+        ? `${key.replace("Cleaning", "")} Cleaning`
+        : key,
+      shape: key.includes("Cleaning") ? TriangleShape : CustomCircle,
+    }))
+  );
+
+  const CustomPointShape = (props: any) => {
+    const { cx, cy, payload } = props;
+    // Use triangle for cleaning, circle otherwise
+    if (payload.isCleaning) {
+      return (
+        <svg x={cx - 7} y={cy - 7} width={14} height={14}>
+          <polygon points="7,0 14,14 0,14" fill={payload.color} />
+        </svg>
+      );
+    }
+    return <circle cx={cx} cy={cy} r={4} fill={payload.color} />;
+  };
+
   return (
     <div className="p-4 m-4 bg-white rounded-2xl shadow">
       <h2 className="text-lg font-semibold mb-4 ml-4">{title}</h2>
@@ -271,22 +295,11 @@ export default function MembraneChart({
           <Legend content={TriangleLegend} />
 
           {/* Render main series */}
-          {Object.entries(displayData).map(([key, points]) => {
-            const isCleaning = key.includes("Cleaning");
-            const displayName = isCleaning
-              ? `${key.replace("Cleaning", "")} Cleaning`
-              : key;
-
-            return (
-              <Scatter
-                key={key}
-                name={displayName}
-                data={points}
-                fill={points[0]?.color}
-                shape={isCleaning ? TriangleShape : CustomCircle}
-              />
-            );
-          })}
+          <Scatter
+            name={metricName}
+            data={flatPoints}
+            shape={CustomPointShape}
+          />
         </ScatterChart>
       </ResponsiveContainer>
     </div>
