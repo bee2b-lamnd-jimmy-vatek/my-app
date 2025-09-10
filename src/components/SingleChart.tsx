@@ -35,7 +35,6 @@ const ALGORITHMS: { value: DownsamplingAlgorithm; label: string }[] = [
 const THRESHOLDS = [50, 100, 200, 500];
 
 const SingleChart = memo(({ config }: SingleChartProps) => {
-  // Mỗi chart có state riêng cho algorithm và threshold
   const [algorithm, setAlgorithm] = useState<DownsamplingAlgorithm>("lttb");
   const [threshold, setThreshold] = useState(200);
   const [showOriginal, setShowOriginal] = useState(false);

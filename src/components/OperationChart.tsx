@@ -1,4 +1,3 @@
-// components/OperationChart.tsx
 import { memo, useEffect, useState, useMemo } from "react";
 import Loading from "./Loading";
 import SingleChart from "./SingleChart";
@@ -11,7 +10,6 @@ const OperationChartComponent = ({ selectedTags }: OperationChartProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [displayedTags, setDisplayedTags] = useState<string[]>(selectedTags);
 
-  // Sử dụng useMemo để tránh tính toán lại dữ liệu mỗi lần render
   const chartConfigs = useMemo(() => {
     const generateMockData = (
       baseValue: number,
