@@ -14,10 +14,7 @@ import { useMemo } from "react";
 import { flattenSeriesData, processSeriesData } from "../utils/chart";
 import MembraneChartLegend from "./legends/MembraneChartLegend";
 import type { DataPoint } from "../types/chart";
-import {
-  formatTooltip,
-  formatTooltipLabel,
-} from "./tooltips/MembraneChartTooltip";
+import { formatTooltip } from "./tooltips/MembraneChartTooltip";
 
 type MembraneChartProps = {
   data: DataPoint[];
