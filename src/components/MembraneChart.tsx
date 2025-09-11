@@ -88,7 +88,6 @@ export default function MembraneChart({
           />
           <Tooltip
             formatter={formatTooltip}
-            labelFormatter={formatTooltipLabel}
             contentStyle={{
               backgroundColor: "white",
               border: "1px solid #e5e7eb",

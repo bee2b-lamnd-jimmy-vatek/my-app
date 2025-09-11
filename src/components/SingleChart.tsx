@@ -13,6 +13,7 @@ import {
   useDownsampling,
   type DownsamplingAlgorithm,
 } from "../hook/useDownsampling";
+import { formatTooltip } from "./tooltips/OperationChartTooltip";
 
 interface SingleChartProps {
   config: {
@@ -151,13 +152,13 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
               }}
             />
             <Tooltip
-              formatter={(value) => [
-                `${Number(value).toFixed(2)}`,
-                config.label,
-              ]}
-              labelFormatter={(label) =>
-                new Date(Number(label)).toLocaleDateString()
-              }
+              formatter={(value: number, name: string) => formatTooltip(value, name, config.label)}
+              contentStyle={{
+                backgroundColor: "white",
+                border: "1px solid #e5e7eb",
+                borderRadius: "0.375rem",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+              }}
             />
             <Legend />
             <Scatter

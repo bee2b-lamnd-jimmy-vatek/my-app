@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export const formatTooltip = (value: number, name: string, props: any) => {
+export const formatTooltip = (value: number, name: string, label: string) => {
   if (name === "x") {
     return [
       new Date(value).toLocaleDateString("en-GB", {
@@ -11,9 +11,7 @@ export const formatTooltip = (value: number, name: string, props: any) => {
     ];
   }
   if (name === "y") {
-    const seriesName = props.payload?.series || name;
-    return [`${Number(value).toFixed(2)}`, seriesName];
+    return [`${Number(value).toFixed(2)}`, label];
   }
   return [value, name];
 };
-
