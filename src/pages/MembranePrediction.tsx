@@ -31,7 +31,7 @@ function generateMockData(
     Math.floor(totalDays * 0.2),
   ];
 
-  let currentDate = new Date(start);
+  const currentDate = new Date(start);
   let dayCount = 0;
 
   for (let seriesIndex = 0; seriesIndex < series.length; seriesIndex++) {

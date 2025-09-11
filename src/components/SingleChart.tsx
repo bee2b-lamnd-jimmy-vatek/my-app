@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { memo, useState } from "react";
 import {
   ScatterChart,
@@ -18,7 +17,7 @@ import {
 interface SingleChartProps {
   config: {
     key: string;
-    data: any[];
+    data: { x: number; y: number }[];
     color: string;
     label: string;
     domain: [number, number];
@@ -127,8 +126,8 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
           <ScatterChart
             margin={{
               top: 10,
-              right: 30,
-              left: 40,
+              right: 20,
+              left: 0,
               bottom: 10,
             }}
           >
@@ -173,21 +172,6 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
           </ScatterChart>
         </ResponsiveContainer>
       </div>
-
-      {/* Info Footer */}
-      {!showOriginal && (
-        <div className="text-xs text-gray-500 mt-2 text-center p-2 bg-blue-50 rounded">
-          <span className="font-medium">Algorithm:</span> {algorithm} •
-          <span className="font-medium"> Max Points:</span> {threshold} •
-          <span className="font-medium"> Compression:</span> {compressionRatio}%
-          •<span className="font-medium"> Performance:</span>{" "}
-          {displayData.length < 100
-            ? "⚡ Fast"
-            : displayData.length < 300
-            ? "🚀 Medium"
-            : "🐢 Slow"}
-        </div>
-      )}
     </div>
   );
 });
