@@ -68,7 +68,7 @@ function generateMockData(
           value: Number(value.toFixed(2)),
           color:
             currentSeries.name === "predicted" ? "lightblue" : "lightgreen",
-          series: currentSeries.name,
+          series: currentSeries.name === "predicted" ? "Predicted Cleaning Event" : "Optimized Cleaning Event",
           isCleaning: true,
         });
       }

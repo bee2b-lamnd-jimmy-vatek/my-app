@@ -27,33 +27,33 @@ type MembraneChartProps = {
   domain?: [number, number];
 };
 
-function TriangleLegend(props: LegendProps) {
-  const { payload } = props;
+function TriangleLegend() {
+  // Define legend items manually
+  const legendItems = [
+    { label: "Actual Permeability", color: "#e53e3e", isCleaning: false },
+    { label: "Predicted Permeability", color: "#3182ce", isCleaning: false },
+    { label: "Optimized Permeability", color: "#38a169", isCleaning: false },
+    { label: "Predicted Cleaning Events", color: "#90cdf4", isCleaning: true },
+    { label: "Optimized Cleaning Events", color: "#68d391", isCleaning: true },
+  ];
 
   return (
     <ul className="flex items-center justify-center">
-      {payload?.map((entry, index) => {
-        const label = entry?.value ?? "";
-
-        const isCleaning =
-          typeof label === "string" && label.toLowerCase().includes("cleaning");
-
-        return (
-          <li
-            key={`item-${index}`}
-            style={{ marginRight: 16, display: "flex", alignItems: "center" }}
-          >
-            <svg width={14} height={14} style={{ marginRight: 4 }}>
-              {isCleaning ? (
-                <polygon points="7,0 14,14 0,14" fill={entry.color} />
-              ) : (
-                <circle cx={7} cy={7} r={6} fill={entry.color} />
-              )}
-            </svg>
-            <span>{label}</span>
-          </li>
-        );
-      })}
+      {legendItems.map((item, index) => (
+        <li
+          key={`legend-item-${index}`}
+          style={{ marginRight: 16, display: "flex", alignItems: "center" }}
+        >
+          <svg width={14} height={14} style={{ marginRight: 4 }}>
+            {item.isCleaning ? (
+              <polygon points="0,0 14,0 7,14" fill={item.color} />
+            ) : (
+              <circle cx={7} cy={7} r={6} fill={item.color} />
+            )}
+          </svg>
+          <span>{item.label}</span>
+        </li>
+      ))}
     </ul>
   );
 }
@@ -68,8 +68,22 @@ const downsampleData = (data: any[], threshold: number) => {
 
 // Custom tooltip formatter
 const formatTooltip = (value: number, name: string, props: any) => {
-  const seriesName = props.payload?.series || name;
-  return [`${Number(value).toFixed(2)}`, seriesName];
+  if (name === "x") {
+    // Format x as date
+    return [
+      new Date(value).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+    ];
+  }
+  if (name === "y") {
+    // Format y as value
+    const seriesName = props.payload?.series || name;
+    return [`${Number(value).toFixed(2)}`, seriesName];
+  }
+  return [value, name];
 };
 
 // Custom label formatter
@@ -156,39 +170,24 @@ export default function MembraneChart({
       };
     }, [seriesData, displayData]);
 
-  // Memoize shapes
-  const TriangleShape = (props: any) => {
-    const { cx, cy, fill } = props;
-    return (
-      <svg x={cx - 7} y={cy - 7} width={14} height={14} fill={fill}>
-        <polygon points="7,0 14,14 0,14" fill={fill} />
-      </svg>
-    );
-  };
-
-  const CustomCircle = (props: any) => {
-    const { cx, cy, fill } = props;
-    return <circle cx={cx} cy={cy} r={4} fill={fill} />;
-  };
-
   // Flatten all points into a single array
   const flatPoints = Object.entries(displayData).flatMap(([key, points]) =>
     points.map((point) => ({
       ...point,
       displayName: key.includes("Cleaning")
         ? `${key.replace("Cleaning", "")} Cleaning`
-        : key,
-      shape: key.includes("Cleaning") ? TriangleShape : CustomCircle,
+        : key
     }))
   );
 
   const CustomPointShape = (props: any) => {
     const { cx, cy, payload } = props;
-    // Use triangle for cleaning, circle otherwise
+    // Upside-down triangle with tip at (cx, cy)
     if (payload.isCleaning) {
       return (
-        <svg x={cx - 7} y={cy - 7} width={14} height={14}>
-          <polygon points="7,0 14,14 0,14" fill={payload.color} />
+        <svg x={cx - 7} y={cy - 14} width={14} height={14}>
+          {/* Tip at (7,14) aligns with (cx,cy) */}
+          <polygon points="0,0 14,0 7,14" fill={payload.color} />
         </svg>
       );
     }
