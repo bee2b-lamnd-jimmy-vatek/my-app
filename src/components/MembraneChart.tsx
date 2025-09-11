@@ -8,7 +8,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-  type LegendProps,
 } from "recharts";
 import { useState, useMemo } from "react";
 
@@ -75,7 +74,7 @@ const formatTooltip = (value: number, name: string, props: any) => {
         day: "2-digit",
         month: "short",
         year: "numeric",
-      })
+      }),
     ];
   }
   if (name === "y") {
@@ -101,8 +100,8 @@ export default function MembraneChart({
   metricName,
   domain,
 }: MembraneChartProps) {
-  const [showOriginal, setShowOriginal] = useState(false);
-  const [threshold, setThreshold] = useState(200);
+  const [showOriginal] = useState(false);
+  const [threshold] = useState(200);
 
   // Memoize series data processing
   const seriesData = useMemo(() => {
@@ -132,7 +131,7 @@ export default function MembraneChart({
         y: point.value,
         color: point.color,
         series: point.series,
-        originalSeries: point.series, // Giữ lại thông tin series gốc
+        originalSeries: point.series,
         isCleaning: point.isCleaning,
       });
 
@@ -150,33 +149,13 @@ export default function MembraneChart({
         }, {} as Record<string, { x: number; y: number; color: string; series: string; originalSeries: string; isCleaning?: boolean }[]>);
   }, [seriesData, showOriginal, threshold]);
 
-  // Calculate compression ratio
-  const { totalOriginalPoints, totalDownsampledPoints, compressionRatio } =
-    useMemo(() => {
-      const totalOriginal = Object.values(seriesData).reduce(
-        (sum, points) => sum + points.length,
-        0
-      );
-      const totalDownsampled = Object.values(displayData).reduce(
-        (sum, points) => sum + points.length,
-        0
-      );
-      const ratio = ((1 - totalDownsampled / totalOriginal) * 100).toFixed(1);
-
-      return {
-        totalOriginalPoints: totalOriginal,
-        totalDownsampledPoints: totalDownsampled,
-        compressionRatio: ratio,
-      };
-    }, [seriesData, displayData]);
-
   // Flatten all points into a single array
   const flatPoints = Object.entries(displayData).flatMap(([key, points]) =>
     points.map((point) => ({
       ...point,
       displayName: key.includes("Cleaning")
         ? `${key.replace("Cleaning", "")} Cleaning`
-        : key
+        : key,
     }))
   );
 
@@ -197,57 +176,6 @@ export default function MembraneChart({
   return (
     <div className="p-4 m-4 bg-white rounded-2xl shadow">
       <h2 className="text-lg font-semibold mb-4 ml-4">{title}</h2>
-
-      {/* Simple Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-800">
-            {metricName}
-          </span>
-          <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded">
-            {totalDownsampledPoints}/{totalOriginalPoints} points
-          </span>
-          {!showOriginal && (
-            <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-              {compressionRatio}% compressed
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3">
-          {/* Threshold Select */}
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-500 mb-1">Max Points</label>
-            <select
-              value={threshold}
-              onChange={(e) => setThreshold(Number(e.target.value))}
-              className="text-xs border rounded px-2 py-1 w-20"
-              disabled={showOriginal}
-            >
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={200}>200</option>
-              <option value={500}>500</option>
-              <option value={1000}>1000</option>
-              <option value={1500}>1500</option>
-            </select>
-          </div>
-
-          {/* Toggle Original */}
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-500 mb-1">View</label>
-            <label className="flex items-center gap-1 text-xs">
-              <input
-                type="checkbox"
-                checked={showOriginal}
-                onChange={(e) => setShowOriginal(e.target.checked)}
-                className="rounded"
-              />
-              Original
-            </label>
-          </div>
-        </div>
-      </div>
 
       <ResponsiveContainer width="100%" height={350}>
         <ScatterChart
@@ -278,8 +206,10 @@ export default function MembraneChart({
               value: metricName,
               angle: -90,
               position: "insideLeft",
-              dx: -60,
-              style: { textAnchor: "middle" },
+              offset: -25,
+              style: {
+                textAnchor: "middle",
+              },
             }}
           />
           <Tooltip
