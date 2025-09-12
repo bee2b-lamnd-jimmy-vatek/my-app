@@ -11,6 +11,9 @@ body {
     background: var(--background);
 }
 
+.recharts-tooltip-wrapper * {
+  color: var(--text-caption) !important;
+}
 ::-webkit-scrollbar {
     width: 6px;
     height: 8px;

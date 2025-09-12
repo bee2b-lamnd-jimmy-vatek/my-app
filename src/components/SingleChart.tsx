@@ -30,7 +30,7 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-800">
+          <span className="text-sm font-medium text-text-body">
             {config.label}
           </span>
         </div>
@@ -77,7 +77,7 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
                 boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
               }}
               wrapperStyle={{
-                transition: "none", // ⚡ tránh tooltip chạy từ trái sang
+                transition: "none",
               }}
               cursor={{ stroke: "#ccc", strokeWidth: 1 }}
             />

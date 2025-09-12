@@ -45,8 +45,10 @@ export default function MembraneChart({
   };
 
   return (
-    <div className="p-4 m-4 bg-white rounded-2xl shadow">
-      <h2 className="text-lg font-semibold mb-4 ml-4">{title}</h2>
+    <div className="p-4 m-4 bg-bg-card rounded-2xl shadow">
+      <h2 className="text-lg font-semibold mb-4 ml-4 text-text-body">
+        {title}
+      </h2>
 
       <ResponsiveContainer width="100%" height={350}>
         <ScatterChart
@@ -63,6 +65,10 @@ export default function MembraneChart({
             type="number"
             scale="time"
             domain={["auto", "auto"]}
+            tick={{
+              fill: "var(--text-body)",
+              fontSize: 12,
+            }}
             tickFormatter={(unix) =>
               new Date(unix).toLocaleDateString("en-GB", {
                 day: "2-digit",
@@ -73,6 +79,10 @@ export default function MembraneChart({
           <YAxis
             dataKey="y"
             domain={domain ?? ["dataMin", "dataMax"]}
+            tick={{
+              fill: "var(--text-body)",
+              fontSize: 12,
+            }}
             label={{
               value: metricName,
               angle: -90,
@@ -86,12 +96,14 @@ export default function MembraneChart({
           <Tooltip
             formatter={formatTooltip}
             contentStyle={{
-              backgroundColor: "white",
+              backgroundColor: "var(--background-input)",
               border: "1px solid #e5e7eb",
               borderRadius: "0.375rem",
               boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+              padding: "0.5rem",
             }}
           />
+
           <Legend content={MembraneChartLegend} />
 
           <Scatter

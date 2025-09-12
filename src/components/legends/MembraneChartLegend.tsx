@@ -21,7 +21,7 @@ function MembraneChartLegend() {
               <circle cx={7} cy={7} r={6} fill={item.color} />
             )}
           </svg>
-          <span>{item.label}</span>
+          <span className="text-text-body">{item.label}</span>
         </li>
       ))}
     </ul>
