@@ -1,7 +1,7 @@
 import { lazy, useState } from "react";
 import Header from "./components/Header";
 import Tabs from "./components/Tabs";
-import Loading from "./components/Loading";
+import Loading from "./components/loading/Loading";
 
 // import OperationTrends from "./pages/OperationTrends";
 // import MembranePrediction from "./pages/MembranePrediction";

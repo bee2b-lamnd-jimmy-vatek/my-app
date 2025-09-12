@@ -1,5 +1,5 @@
-import OperationTrendFilters from "../components/OperationTrendFilters";
-import OperationChart from "../components/OperationChart";
+import OperationTrendFilters from "../components/filter/OperationTrendFilters";
+import OperationChart from "../components/chart/OperationChart";
 import { useState } from "react";
 
 export default function OperationTrends() {

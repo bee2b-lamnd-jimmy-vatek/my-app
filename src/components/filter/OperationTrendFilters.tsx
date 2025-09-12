@@ -1,5 +1,7 @@
-import { Calendar, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import Calendar from "../selects/Calendar";
+import Select from "../selects/Select";
 
 interface OperationTrendFiltersProps {
   onSubmit?: () => void;
@@ -13,7 +15,12 @@ export default function OperationTrendFilters({
   onSubmit,
 }: OperationTrendFiltersProps) {
   const allTags = ["flux", "perm", "tmp"];
+  const membraneOptions = [
+    { value: "UF_2", label: "UF_Membrane_Train_2" },
+    { value: "UF_3", label: "UF_Membrane_Train_3" },
+  ];
 
+  const [selected, setSelected] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const toggleTag = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -25,29 +32,14 @@ export default function OperationTrendFilters({
 
   return (
     <div className=" px-6 py-4 flex flex-wrap gap-4 items-center w-full">
-      <div className="flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-icon" />
-        <input
-          type="date"
-          className="border rounded-lg px-2 py-1 text-sm text-text-caption bg-background-input hover:border-gray-300  focus:outline-none"
-          defaultValue="2024-06-01"
-        />
-        <span className="text-text-caption">→</span>
-        <input
-          type="date"
-          className="border rounded-lg px-2 py-1 text-sm text-text-caption bg-background-input hover:border-gray-300  focus:outline-none"
-          defaultValue="2024-06-30"
-        />
-      </div>
+      <Calendar />
 
-      <select className="border rounded-lg px-3 py-1 text-sm text-text-caption bg-background-input hover:border-gray-300  focus:outline-none">
-        <option value="UF_2" className="text-text-caption">
-          UF_Membrane_Train_2
-        </option>
-        <option value="UF_3" className="text-text-caption">
-          UF_Membrane_Train_3
-        </option>
-      </select>
+      <Select
+        options={membraneOptions}
+        placeholder="Select Membrane Train"
+        value={selected}
+        onChange={setSelected}
+      />
 
       <div className="relative w-60">
         <div

@@ -11,9 +11,9 @@ import {
 } from "recharts";
 import { useMemo } from "react";
 
-import { flattenSeriesData, processSeriesData } from "../utils/chart";
+import { flattenSeriesData, processSeriesData } from "../../utils/chart";
 import MembraneChartLegend from "./legends/MembraneChartLegend";
-import type { DataPoint } from "../types/chart";
+import type { DataPoint } from "../../types/chart";
 import { formatTooltip } from "./tooltips/MembraneChartTooltip";
 
 type MembraneChartProps = {

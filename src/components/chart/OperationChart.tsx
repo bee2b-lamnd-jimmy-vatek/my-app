@@ -1,5 +1,5 @@
 import { memo, useEffect, useState, useMemo } from "react";
-import Loading from "./Loading";
+import Loading from "../loading/Loading";
 import SingleChart from "./SingleChart";
 
 interface OperationChartProps {
