@@ -16,4 +16,3 @@ export const formatTooltip = (value: number, name: string, props: any) => {
   }
   return [value, name];
 };
-

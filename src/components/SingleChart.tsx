@@ -71,15 +71,11 @@ const SingleChart = memo(({ config }: SingleChartProps) => {
                 formatTooltip(value, name, config.label)
               }
               contentStyle={{
-                backgroundColor: "white",
+                backgroundColor: "var(--background-input)",
                 border: "1px solid #e5e7eb",
                 borderRadius: "0.375rem",
                 boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
               }}
-              wrapperStyle={{
-                transition: "none",
-              }}
-              cursor={{ stroke: "#ccc", strokeWidth: 1 }}
             />
             <Legend />
             <Scatter
